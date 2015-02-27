@@ -478,6 +478,11 @@ FASTCALL_ATTR INLINE_PREFIX void FASTCALL_MSVC strreverse(char* begin, char* end
   aux = *end, *end-- = *begin, *begin++ = aux;
 }
 
+void Buffer_AppendIndentNewlineUnchecked(JSONObjectEncoder *enc)
+{
+  if (enc->indent > 0) Buffer_AppendCharUnchecked(enc, '\n');
+}
+
 void Buffer_AppendIndentUnchecked(JSONObjectEncoder *enc, JSINT32 value)
 {
   int i;
@@ -752,7 +757,7 @@ void encode(JSOBJ obj, JSONObjectEncoder *enc, const char *name, size_t cbName)
         count = 0;
 
         Buffer_AppendCharUnchecked (enc, '[');
-        Buffer_AppendCharUnchecked (enc, '\n');
+        Buffer_AppendIndentNewlineUnchecked (enc);
 
         while (enc->iterNext(obj, &tc))
         {
@@ -762,7 +767,7 @@ void encode(JSOBJ obj, JSONObjectEncoder *enc, const char *name, size_t cbName)
 #ifndef JSON_NO_EXTRA_WHITESPACE
             Buffer_AppendCharUnchecked (buffer, ' ');
 #endif
-            Buffer_AppendCharUnchecked (enc, '\n');
+            Buffer_AppendIndentNewlineUnchecked (enc);
           }
 
           iterObj = enc->iterGetValue(obj, &tc);
@@ -774,7 +779,7 @@ void encode(JSOBJ obj, JSONObjectEncoder *enc, const char *name, size_t cbName)
       }
 
       enc->iterEnd(obj, &tc);
-      Buffer_AppendCharUnchecked (enc, '\n');
+      Buffer_AppendIndentNewlineUnchecked (enc);
       Buffer_AppendIndentUnchecked (enc, enc->level);
       Buffer_AppendCharUnchecked (enc, ']');
       break;
@@ -785,7 +790,7 @@ void encode(JSOBJ obj, JSONObjectEncoder *enc, const char *name, size_t cbName)
     count = 0;
 
     Buffer_AppendCharUnchecked (enc, '{');
-    Buffer_AppendCharUnchecked (enc, '\n');
+    Buffer_AppendIndentNewlineUnchecked (enc);
 
     while (enc->iterNext(obj, &tc))
     {
@@ -795,7 +800,7 @@ void encode(JSOBJ obj, JSONObjectEncoder *enc, const char *name, size_t cbName)
 #ifndef JSON_NO_EXTRA_WHITESPACE
         Buffer_AppendCharUnchecked (enc, ' ');
 #endif
-        Buffer_AppendCharUnchecked (enc, '\n');
+        Buffer_AppendIndentNewlineUnchecked (enc);
       }
 
       iterObj = enc->iterGetValue(obj, &tc);
@@ -808,7 +813,7 @@ void encode(JSOBJ obj, JSONObjectEncoder *enc, const char *name, size_t cbName)
     }
 
     enc->iterEnd(obj, &tc);
-    Buffer_AppendCharUnchecked (enc, '\n');
+    Buffer_AppendIndentNewlineUnchecked (enc);
     Buffer_AppendIndentUnchecked (enc, enc->level);
     Buffer_AppendCharUnchecked (enc, '}');
     break;
